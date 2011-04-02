@@ -21,4 +21,6 @@
 		include('config.production.php');
 	}
 	
+	$mysqli = new Database($db['host'],$db['user'],$db['pass'],$db['db']);
+
 ?>
