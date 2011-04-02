@@ -1,3 +1,8 @@
 This is the new project for managing member systems, predicated for using with member cards. Using MySQL and OOP with PHP.
 
 Development is pushed by cubetech.ch
+
+open points:
+- why/where put the id in the Member construct -> next point
+- howto create new member
+- way's of using the mysqli connector -> include
