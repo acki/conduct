@@ -1,5 +1,5 @@
 <?
 
-	header("Location: /");
+	header("Location: ../");
 	
 ?>
