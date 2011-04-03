@@ -1,5 +1,5 @@
 <?
 
-	header("Redirect: /");
+	header("Location: /");
 	
 ?>
