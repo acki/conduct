@@ -8,8 +8,7 @@
 	 * Which hosts are using in development mode can be set in include.php
 	 * in the variable $developmentHosts
 	 *
-	 * chrigu99, Christoph S. Ackermann, info@acki.be
-	 * @config
+	 * @author Christoph S. Ackermann <info@acki.be>
 	 */
 
 	$db = array(

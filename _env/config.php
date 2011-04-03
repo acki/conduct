@@ -5,8 +5,7 @@
 	 * 
 	 * This is the default configuration file for the site configuration.
 	 *
-	 * chrigu99, Christoph S. Ackermann, info@acki.be
-	 * @config
+	 * @author Christoph S. Ackermann <info@acki.be>
 	 */
 
 	$db = array(
