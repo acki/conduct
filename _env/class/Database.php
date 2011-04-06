@@ -36,6 +36,7 @@
 			$this->table 			= $table;
 			$whereClauseValuable 	= false;
 			$this->whereValues 		= false;
+			$this->stmt				= false;
 
 			//look if toSelect is an array			
 			if(is_array($this->toSelect)) {
@@ -53,22 +54,19 @@
 			
 			//prepare the statement
 			if(!$this->stmt = $this->mysqli->prepare($this->query)) {
-				print 'Database select failed. Sorry.';
-				exit;
+				$this->throwMysqliError('select',$this->mysqli->error);
 			}
 			
 			//bind params if $whereClauseValuable exists
 			if($whereClauseValuable) {
 				if(!$this->bindParams()) {
-					print 'Database bind params failed. Sorry.<br />';
-					exit;
+					$this->throwMysqliError('bind params',$this->mysqli->error);
 				}
 			}
 			
 			//execute the statement
 			if(!$this->stmt->execute()) {
-				print 'Database execute failed. Sorry.';
-				exit;
+				$this->throwMysqliError('execute',$this->mysqli->error);
 			} 
 			
 			//get the data
@@ -185,6 +183,12 @@
 			} //foreach
 			
 		} //function createWhereString
+		
+		public static function throwMysqliError($message, $error) {
+			print 'Database ' . $message . ' failed. Sorry.<br />';
+			print $error;
+			exit;
+		}
 	
 	} //class
 	
