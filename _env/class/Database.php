@@ -122,7 +122,6 @@
 			}//foreach
 			
 			//bind parameters to statement
-			var_dump($values);
 			if(call_user_func_array(array($this->stmt, "bind_param"), $values)) {
 				return true;
 			}//if call_user_func_array
