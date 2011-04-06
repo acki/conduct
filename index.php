@@ -2,6 +2,8 @@
 
 	include('_env/include.php');
 	
-	$mysqli->select('*', 'member', array('id>4', 'name!=Bla'));
+	$id = 4;
+	$data = $mysqli->select('member', array(id=>array('21','<')));
+	print_r($data);
 
 ?>
