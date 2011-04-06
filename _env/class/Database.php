@@ -6,6 +6,7 @@
 		protected 	$toSelect;
 		protected 	$table;
 		protected 	$whereClauses;
+		protected 	$whereString;
 		private 	$query;
 	
 		public function setConnector($mysqli) {
@@ -23,10 +24,10 @@
 			} //if is_array
 			
 			if($this->whereClauses) {
-				if(!is_array($this->whereClauses)) {
+				if(is_array($this->whereClauses)) {
 					$first = true;
 					$where = ' WHERE ';
-					foreach($this->whereClauses as $val) {
+					foreach($this->whereClauses as $key=>$val) {
 						if(!$first) {
 							$where .= ' AND ';
 						} else {
@@ -49,6 +50,37 @@
 		public function escape($string) {
 			return mysqli_real_escape_string($this->mysqli, $string);
 		} // function escape
+		
+		// $where = array('id'=>array('1','=');
+		
+		public function createWhereString($where) {
+		
+			$this->whereString 	= '';
+			$this->first 		= true;
+		
+			if(!is_array($where)) {
+				return false;
+			}
+			
+			foreach($where as $key=>$val) {
+				if($this->first) {
+					$this->whereString .= ' WHERE ';
+					$this->first = false;
+				} else {
+					$this->whereString .= ' AND ';
+				} //ifelse
+				
+				if($val[1] && ($val[1] == "=" || $val[1] == "<" || $val[1] == ">" || $val[1] == "<=" || $val[1] == ">=")) {
+					$operator = $val[1];
+				} else {
+					$operator = "=";
+				} //ifelse
+				
+				$this->whereString .= $key . ' ' . $operator . ' ? ';
+				
+			} //foreach
+			
+		} //function createWhereString
 	
 	} //class
 	
