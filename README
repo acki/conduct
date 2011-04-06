@@ -2,7 +2,8 @@ This is the new project for managing member systems, predicated for using with m
 
 Development is pushed by cubetech.ch
 
-open points:
+to do(slowly updated):
 - why/where put the id in the Member construct -> next point
 - howto create new member
-- way's of using the mysqli connector -> include
+- update/insert/delete for Database class
+- Member class
