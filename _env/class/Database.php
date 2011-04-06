@@ -108,7 +108,7 @@
 		 * Bind the params to the statement
 		*/
 		public function bindParams() {
-			$values = array();
+			$values = array('');
 			//generates array for each value
 			foreach($this->whereValues as $val) {
 				//difference between string and integer
@@ -160,7 +160,7 @@
 				}//if
 				
 				//creates the operator for where statement
-				if($val[1] && (
+				if(isset($val[1]) && (
 								$val[1] == "=" || 
 								$val[1] == "!=" || 
 								$val[1] == "<" || 

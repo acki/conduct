@@ -11,7 +11,7 @@
 		}//function construct
 		
 		public function getFullName() {
-			$value = $this->mysqli->select('member',array(id=>$this->id),'prename,name');
+			$value = $this->mysqli->select('member',array('id'=>$this->id),'prename,name');
 			return $value[0]['prename'] . ' ' . $value[0]['name'];
 		}//function getName
 		

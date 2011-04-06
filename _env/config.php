@@ -9,10 +9,10 @@
 	 */
 
 	$db = array(
-		host => 'localhost',
-		user => 'conduct',
-		pass => 'conduct',
-		db   => 'conduct',
+		'host' => 'localhost',
+		'user' => 'conduct',
+		'pass' => 'conduct',
+		'db'   => 'conduct',
 	);
 	
 ?>
