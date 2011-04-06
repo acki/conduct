@@ -35,6 +35,7 @@
 			$this->toSelect 		= $toSelect;
 			$this->table 			= $table;
 			$whereClauseValuable 	= false;
+			$this->whereValues 		= false;
 
 			//look if toSelect is an array			
 			if(is_array($this->toSelect)) {
@@ -59,7 +60,7 @@
 			//bind params if $whereClauseValuable exists
 			if($whereClauseValuable) {
 				if(!$this->bindParams()) {
-					print 'Database bind params failed. Sorry.';
+					print 'Database bind params failed. Sorry.<br />';
 					exit;
 				}
 			}
@@ -123,6 +124,7 @@
 			}//foreach
 			
 			//bind parameters to statement
+			var_dump($values);
 			if(call_user_func_array(array($this->stmt, "bind_param"), $values)) {
 				return true;
 			}//if call_user_func_array
