@@ -21,6 +21,7 @@
 		
 		public function __construct($host, $user, $pass, $db) {
 			$this->mysqli = new mysqli($host, $user, $pass, $db);
+			return $this->mysqli;
 		} //function construct
 		
 		/**
