@@ -18,13 +18,4 @@
 		'db'   => 'conduct',
 	);
 	
-	// or
-	
-	/*
-	$db['host'] = 'localhost';
-	$db['user'] = 'conduct';
-	$db['pass'] = 'conduct';
-	$db['db'] 	= 'conduct';
-	*/
-
 ?>
