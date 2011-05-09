@@ -1,16 +1,14 @@
 <?php
 
 	error_reporting(E_ALL);
+	session_start();
 
 	function __autoload($class) {
 		include('class/'.$class.'.php');
 	}
 	
-	$development = array(
-							'localhost',
-							'127.0.0.1',
-						);
-	
+	require_once('config.php');
+		
 	if (isset($_COOKIE['env']) && !isset($_GET['env'])) {
 		include('config.' . $_COOKIE['env'] . '.php');
 	} elseif (isset($_GET['env'])) {
@@ -18,7 +16,6 @@
 		include('config.' . $_GET['env'] . '.php');
 	} else {
 		$found = false;
-		include('config.php');
 		foreach($development as $d) {
 			if ($_SERVER['HTTP_HOST'] == $d) {
 				include('config.development.php');
@@ -31,7 +28,6 @@
 		}
 	}
 		
-					
-	$mysqli = new Database($db['host'],$db['user'],$db['pass'],$db['db']);
+	$mysqli = new Database($GLOBALS['db']['host'],$GLOBALS['db']['user'],$GLOBALS['db']['pass'],$GLOBALS['db']['db']);
 
 ?>
