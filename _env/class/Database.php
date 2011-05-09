@@ -15,7 +15,7 @@
 		protected 	$toSelect;
 		protected 	$table;
 		protected 	$whereString;
-		protected 	$whereValues 		= array();
+		protected 	$bindValues 		= array();
 		private 	$query;
 		private 	$stmt;
 		
@@ -23,6 +23,32 @@
 			$this->mysqli = new mysqli($host, $user, $pass, $db);
 			return $this->mysqli;
 		} //function construct
+		
+		/**
+		 * Update an entry in the database
+		 * @param string $table
+		 * @param array $values (Format: array(field=>value))
+		 * @param array $whereClauses (Format: array(field=>value) or array(field=>array(value, operator)))
+		*/
+		
+		public function update($table, $values, $whereClauses) {
+			$this->table			= $table;
+			$this->whereString		= false;
+			$this->bindValues		= false;
+			
+			if(!is_array($values)) {
+				die('update takes an array as second parameter');
+			}
+			
+			$this->createDataString($values);
+			$this->createWhereString($whereClauses);
+			
+			$this->query			= 'UPDATE ' . $this->table . ' SET ' . $this->dataString . $this->whereString;
+						
+			$this->prepareAndExecuteQuery();
+			//var_dump($this->dataValues);
+			
+		}
 		
 		/**
 		 * Select database entries
@@ -34,8 +60,8 @@
 		public function select($table, $whereClauses=false, $toSelect='*') {
 			$this->toSelect 		= $toSelect;
 			$this->table 			= $table;
-			$whereClauseValuable 	= false;
-			$this->whereValues 		= false;
+			$this->bindValues		= false;
+			$this->whereString		= false;
 			$this->stmt				= false;
 
 			//look if toSelect is an array			
@@ -45,30 +71,15 @@
 			
 			//if $whereClauses exists, create a string for it
 			if(isset($whereClauses) && is_array($whereClauses) && count($whereClauses)>0) {
-				$whereClauseValuable = true;
 				$this->createWhereString($whereClauses);
 			} //if whereclauses
 			
 			//creates a query with our known data
 			$this->query			= 'SELECT ' . $this->toSelect . ' FROM ' . $this->table . $this->whereString;
 			
-			//prepare the statement
-			if(!$this->stmt = $this->mysqli->prepare($this->query)) {
-				$this->throwMysqliError('select',$this->mysqli->error);
-			}
-			
-			//bind params if $whereClauseValuable exists
-			if($whereClauseValuable) {
-				if(!$this->bindParams()) {
-					$this->throwMysqliError('bind params',$this->mysqli->error);
-				}
-			}
-			
-			//execute the statement
-			if(!$this->stmt->execute()) {
-				$this->throwMysqliError('execute',$this->mysqli->error);
-			} 
-			
+			//prepare, bind and execute the statement
+			$this->prepareAndExecuteQuery();
+
 			//get the data
 			$meta = $this->stmt->result_metadata();
 			while($field = $meta->fetch_field()) {
@@ -91,7 +102,7 @@
 				return $allRows;
 			} else {
 				return false;
-			}			
+			}
 			
 		} //function select
 		
@@ -101,25 +112,30 @@
 		public function escape($string) {
 			return mysqli_real_escape_string($this->mysqli, $string);
 		} // function escape
-		
-		// $where = array('id'=>array('1','=');
-		
+				
 		/**
 		 * Bind the params to the statement
+		 * @param array $bindValues (Format: array(key=>val))
 		*/
-		public function bindParams() {
+		public function bindParams($bindValues) {
+		
 			$values = array('');
+						
 			//generates array for each value
-			foreach($this->whereValues as $val) {
-				//difference between string and integer
-				if((int)$val) {
-					$values[0] .= 'i';
-					$values[] = &$val;
-				} else {
-					$values[0] .= 's';
-					$values[] = &$val;
-				}//ifelse
-			}//foreach
+			if(isset($bindValues) && is_array($bindValues)) {
+			
+				foreach($bindValues as $key=>$val) {
+					//difference between string and integer
+					if((int)$val === $val && is_int((int)$val)) {
+						$values[0] .= 'i';
+						$values[] = &$bindValues[$key];
+					} else {
+						$values[0] .= 's';
+						$values[] = &$bindValues[$key];
+					}//ifelse
+				}//foreach
+						
+			}
 			
 			//bind parameters to statement
 			if(call_user_func_array(array($this->stmt, "bind_param"), $values)) {
@@ -177,11 +193,64 @@
 				$this->whereString .= $key . ' ' . $operator . ' ? ';
 				
 				//add the values to the classwide value cache
-				$this->whereValues[] = $val[0];
+				$this->bindValues[] = $val[0];
 				
 			} //foreach
 			
 		} //function createWhereString
+		
+		/**
+		 * Creates a string with data for update or insert
+		 * @param array $data (Format: array(key=>val))
+		 * @param string $type insert|update switch
+		*/
+		
+		public function createDataString($data, $type='update') {
+		
+			$this->bindValues = '';
+				
+			if($type === 'update') {
+			
+				foreach($data as $key=>$val) {
+					$this->dataString .= $key . ' = ?, ';
+					$this->bindValues[] = $val;
+				}
+				$this->dataString = substr($this->dataString, 0, strlen($this->dataString)-2);
+			
+			}
+			
+		}
+		
+		/**
+		 * Prepares the query, bind the params and execute the thing
+		*/
+		
+		public function prepareAndExecuteQuery() {
+		
+			//prepare the statement
+			if(!$this->stmt = $this->mysqli->prepare($this->query)) {
+				$this->throwMysqliError($this->query, $this->mysqli->error);
+			}
+			
+			//bind params if $this->whereValues exists and is an array
+			if(isset($this->bindValues) && is_array($this->bindValues)) {
+				if(!$this->bindParams($this->bindValues)) {
+					$this->throwMysqliError('bind params', $this->mysqli->error);
+				}
+			}
+			
+			//execute the statement
+			if(!$this->stmt->execute()) {
+				$this->throwMysqliError('execute', $this->mysqli->error);
+			}
+			
+		}
+		
+		/**
+		 * Throws a fine error
+		 * @param string $message
+		 * @param string $error ($this->mysqli->error)
+		*/
 		
 		public static function throwMysqliError($message, $error) {
 			print 'Database ' . $message . ' failed. Sorry.<br />';
