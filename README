@@ -5,5 +5,6 @@ Development is pushed by cubetech.ch
 to do(slowly updated):
 - why/where put the id in the Member construct -> next point
 - howto create new member
-- update/insert/delete for Database class
-- Member class
+- insert/delete for Database class
+- maybe tests?
+- Member/Login/Auth class
