@@ -27,6 +27,10 @@
 			include('config.production.php');
 		}
 	}
+	
+	if($_SERVER['HTTP_HOST'] === $deployment['cloud']) {
+		include('config.cloud.php');
+	}
 		
 	$mysqli = new Database($GLOBALS['db']['host'],$GLOBALS['db']['user'],$GLOBALS['db']['pass'],$GLOBALS['db']['db']);
 

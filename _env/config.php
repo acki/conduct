@@ -28,4 +28,8 @@
 		'127.0.0.1',
 	);
 	
+	$deployment = array(
+		'cloud' => 'conduct.phpfogapp.com',
+	);
+	
 ?>
