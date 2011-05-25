@@ -4,7 +4,13 @@
 	session_start();
 
 	function __autoload($class) {
-		include('class/'.$class.'.php');
+		if(file_exists('class/'.$class.'.php')) {
+			include('class/'.$class.'.php');
+		} elseif (file_exists('class/'.$class.'/'.$class.'.php')) {
+			include('class/'.$class.'/'.$class.'.php');
+		} else {
+			print "Couldn't import class file. Fail.";
+		}
 	}
 	
 	require_once('config.php');
