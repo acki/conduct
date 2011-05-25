@@ -4,12 +4,12 @@
 	session_start();
 
 	function __autoload($class) {
-		if(file_exists('class/'.$class.'.php')) {
+		if(file_exists('_env/class/'.$class.'.php')) {
 			include('class/'.$class.'.php');
-		} elseif (file_exists('class/'.$class.'/'.$class.'.php')) {
+		} elseif (file_exists('_env/class/'.$class.'/'.$class.'.php')) {
 			include('class/'.$class.'/'.$class.'.php');
 		} else {
-			print "Couldn't import class file. Fail.";
+			print "Couldn't import class file \"".$class."\". Fail.";
 		}
 	}
 	
